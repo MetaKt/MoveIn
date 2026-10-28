@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { moveOutDate } from "./booking";
-import { nowIso, uid } from "./format";
+import { fullName, nowIso, uid } from "./format";
 import {
   SEED_APPLICATIONS,
   SEED_BOOKINGS,
@@ -310,6 +310,13 @@ export const useStore = create<Store>()(
         },
         uploadCountersigned: (id, f) => {
           const b = booking(id);
+          const student = get().users.find((u) => u.id === b.studentId);
+          // The room is now rented: take it off the market until the tenancy ends.
+          set((s) => ({
+            listings: s.listings.map((l) =>
+              l.id === b.listingId ? { ...l, status: "off_market", tenancy: { studentName: fullName(student), endsOn: moveOutDate(b.moveIn, b.months) } } : l,
+            ),
+          }));
           patchBooking(
             id,
             { countersigned: f, status: "completed", whatsappGroupUrl: `https://chat.whatsapp.com/movein-${id}` },
