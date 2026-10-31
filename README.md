@@ -59,6 +59,6 @@ To switch over: create a Supabase project, run the migrations (`supabase db push
 
 ## Notes
 
-- Maps use Leaflet with OpenStreetMap/CARTO tiles, so no API key is needed. Swap to a paid tile provider if traffic grows.
+- Maps use Leaflet with OpenStreetMap's free tiles, so no API key is needed. Those tiles are for light use only: before launch, set `NEXT_PUBLIC_MAP_TILE_URL` to a hosted provider such as MapTiler or Stadia Maps (see `.env.example`).
 - Area prices, faculty → area recommendations and station walking times in `src/lib/reference.ts` are placeholders for the MoveIn team to confirm.
 - Photos and illustrations come from the client's concept deck.
