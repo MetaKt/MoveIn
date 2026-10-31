@@ -51,6 +51,8 @@ for (const [who, act, payload] of [[L,'acknowledge_id','{}'],[L,'accept','{}'],[
   await as(who, `select public.booking_transition($1,$2,$3::jsonb)`, [bid, act, payload]);
 const b = (await db.query(`select status, student_accepted from public.bookings where id=$1`, [bid])).rows[0];
 ok("booking completed after full flow", b.status === "completed");
+const rented = (await db.query(`select status, tenancy from public.listings where id=$1`, [lid.id])).rows[0];
+ok("rented room taken off the market", rented.status === "off_market" && rented.tenancy?.endsOn === "2027-06-05");
 ok("two contract versions kept", (await db.query(`select count(*)::int n from public.contract_versions`)).rows[0].n === 2);
 ok("landlord reads passport after accepting", (await as(L, `select name from storage.objects where name like 'pending/%'`)).rows.length === 1);
 ok("student reads landlord ID after acceptance", (await as(S, `select name from storage.objects where name like 'landlords/%'`)).rows.length === 1);

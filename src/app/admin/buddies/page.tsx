@@ -86,7 +86,7 @@ export default function AdminBuddies() {
               <div>
                 <p className="font-semibold">{fullName(b)}</p>
                 <p className="text-xs text-muted">
-                  {b.buddy?.faculty} · {load(b.id)} active students
+                  {b.buddy?.faculty} · {load(b.id)} active {load(b.id) === 1 ? "student" : "students"}
                 </p>
               </div>
             </Card>

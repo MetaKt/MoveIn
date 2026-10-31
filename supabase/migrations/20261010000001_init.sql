@@ -441,6 +441,11 @@ begin
     when 'countersign' then
       if not is_student or not b.student_accepted then raise exception 'Not allowed'; end if;
       update bookings set countersigned_path = p_payload ->> 'path', status = 'completed', updated_at = now() where id = b.id;
+      -- The room is rented: take it off the market until the tenancy ends.
+      update listings set status = 'off_market',
+        tenancy = jsonb_build_object('studentName', (select first_name || ' ' || last_name from profiles where id = b.student_id),
+                                     'endsOn', (b.move_in + make_interval(months => b.months))::date)
+      where id = b.listing_id;
       perform notify(b.landlord_id, 'The contract is countersigned. Join the WhatsApp group!', '/host/bookings/' || b.id);
 
     when 'contract_team' then
