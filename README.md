@@ -42,9 +42,14 @@ src/app/host          landlord home, my rooms, room editor, student list + propo
 src/app/buddy-portal  buddy home, profile, manual, buddies, FAQ
 src/app/admin         dashboard, room approval, bookings, buddy matching, profiles
 src/app/become-a-buddy, onboarding, signin
+src/lib/i18n          English/Thai switch; Thai text lives in src/lib/i18n/th
 src/lib               types, reference data (areas, stations, faculties), booking state machine, demo store + seed data
 supabase/migrations   production database schema, row-level security, storage rules, booking RPCs
 ```
+
+## Languages (English / ไทย)
+
+Every page has an EN / ไทย switch, and the choice is remembered in the browser. English is the source text: wrap UI strings in `t("…")` (inside components, from `useT()`) or `msg("…")` (in constants), and add the Thai line to the matching file in `src/lib/i18n/th/`. Use `{name}` slots for values, and `[brackets]` for words shown in brand blue. `npm test` fails if any string is missing its Thai version. Content people type in (room titles, descriptions, reviews) is shown as written.
 
 ## Going to production (Supabase)
 

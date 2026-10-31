@@ -1,9 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Noto_Sans_Thai, Plus_Jakarta_Sans } from "next/font/google";
+import { LangSync } from "@/components/language-switch";
 import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta", display: "swap" });
+// Jakarta has no Thai glyphs, so Thai text falls through to Noto Sans Thai.
+const thai = Noto_Sans_Thai({ subsets: ["thai"], variable: "--font-thai", display: "swap" });
 
 export const metadata: Metadata = {
   title: { default: "MoveIn · Rooms & buddies for Chula exchange students", template: "%s · MoveIn" },
@@ -15,8 +18,11 @@ export const viewport: Viewport = { themeColor: "#0f66d0", width: "device-width"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={jakarta.variable}>
-      <body className="min-h-dvh font-sans">{children}</body>
+    <html lang="en" className={`${jakarta.variable} ${thai.variable}`}>
+      <body className="min-h-dvh font-sans">
+        <LangSync />
+        {children}
+      </body>
     </html>
   );
 }

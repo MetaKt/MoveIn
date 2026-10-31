@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Card, Field, Input, PageHeader } from "@/components/ui";
+import { Button, Card, Field, Input, PageHeader, hl } from "@/components/ui";
+import { msg, useT } from "@/lib/i18n";
 import { useMe, useStore } from "@/lib/store";
 
 export default function BuddyProfile() {
+  const t = useT();
   const me = useMe()!;
   const update = useStore((s) => s.updateUser);
   const [f, setF] = useState({
@@ -19,29 +21,25 @@ export default function BuddyProfile() {
   });
   const [saved, setSaved] = useState(false);
   const fields: [keyof typeof f, string][] = [
-    ["firstName", "First name"],
-    ["lastName", "Last name"],
-    ["university", "University"],
-    ["faculty", "Faculty"],
-    ["year", "Year"],
-    ["email", "Email"],
-    ["phone", "Phone"],
-    ["whatsapp", "WhatsApp ID"],
+    ["firstName", msg("First name")],
+    ["lastName", msg("Last name")],
+    ["university", msg("University")],
+    ["faculty", msg("Faculty")],
+    ["year", msg("Year")],
+    ["email", msg("Email")],
+    ["phone", msg("Phone")],
+    ["whatsapp", msg("WhatsApp ID")],
   ];
 
   return (
     <div className="max-w-3xl">
       <PageHeader
-        title={
-          <>
-            Your <span className="text-brand-600">profile</span>
-          </>
-        }
+        title={hl(t("Your [profile]"))}
       />
       <Card className="p-5">
         <div className="grid gap-4 sm:grid-cols-2">
           {fields.map(([k, label]) => (
-            <Field key={k} label={label}>
+            <Field key={k} label={t(label)}>
               {(id) => (
                 <Input
                   id={id}
@@ -56,7 +54,7 @@ export default function BuddyProfile() {
           ))}
         </div>
         <div className="mt-5 flex items-center justify-end gap-3">
-          {saved && <span className="text-sm font-medium text-emerald-700">Saved</span>}
+          {saved && <span className="text-sm font-medium text-emerald-700">{t("Saved")}</span>}
           <Button
             onClick={() => {
               update(me.id, {
@@ -69,7 +67,7 @@ export default function BuddyProfile() {
               setSaved(true);
             }}
           >
-            Edit profile
+            {t("Edit profile")}
           </Button>
         </div>
       </Card>

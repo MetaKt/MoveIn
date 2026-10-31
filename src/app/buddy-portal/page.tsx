@@ -5,9 +5,11 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { Card, PageHeader } from "@/components/ui";
 import { date } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 import { useMe, useStore } from "@/lib/store";
 
 export default function BuddyHome() {
+  const t = useT();
   const me = useMe()!;
   const reqs = useStore((s) => s.buddyRequests);
   const users = useStore((s) => s.users);
@@ -22,15 +24,21 @@ export default function BuddyHome() {
       <PageHeader
         title={
           <>
-            Welcome back, <span className="text-brand-600">{me.firstName}</span>
+            {t("Welcome back,")} <span className="text-brand-600">{me.firstName}</span>
           </>
         }
-        subtitle="What would you like to do today?"
+        subtitle={t("What would you like to do today?")}
       />
       <div className="grid gap-4 md:grid-cols-3">
-        <Tile title="Your profile" body={`${me.firstName} ${me.lastName}`} sub={me.buddy?.university ?? ""} href="/buddy-portal/profile" cta="View profile" />
-        <Tile title="Manual" body="How to help students" sub="before and after they arrive" href="/buddy-portal/manual" cta="Read manual" />
-        <Tile title="Your buddies" body={`${mine.length} students`} sub={next ? `Next arrival: ${nextName}, ${date(next.arrivalDate!, "d MMM")}` : "No upcoming arrivals"} href="/buddy-portal/buddies" cta="See buddies" />
+        <Tile title={t("Your profile")} body={`${me.firstName} ${me.lastName}`} sub={t(me.buddy?.university ?? "")} href="/buddy-portal/profile" cta={t("View profile")} />
+        <Tile title={t("Manual")} body={t("How to help students")} sub={t("before and after they arrive")} href="/buddy-portal/manual" cta={t("Read manual")} />
+        <Tile
+          title={t("Your buddies")}
+          body={t("{count} students", { count: mine.length })}
+          sub={next ? t("Next arrival: {name}, {date}", { name: nextName ?? "", date: date(next.arrivalDate!, "d MMM") }) : t("No upcoming arrivals")}
+          href="/buddy-portal/buddies"
+          cta={t("See buddies")}
+        />
       </div>
     </div>
   );

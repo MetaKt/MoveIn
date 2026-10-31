@@ -3,6 +3,7 @@
 import { FileText, Paperclip, Upload } from "lucide-react";
 import { useRef, useState } from "react";
 import { cn, fileSize } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 import type { FileRef } from "@/lib/types";
 
 const MAX_MB = 20;
@@ -45,6 +46,7 @@ export function FileUpload({
   compact?: boolean;
   disabled?: boolean;
 }) {
+  const t = useT();
   const input = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
@@ -53,7 +55,7 @@ export function FileUpload({
     const f = files?.[0];
     if (!f) return;
     if (f.size > MAX_MB * 1024 * 1024) {
-      setError(`That file is larger than ${MAX_MB} MB.`);
+      setError(t("That file is larger than {mb} MB.", { mb: MAX_MB }));
       return;
     }
     setError(undefined);
@@ -76,7 +78,7 @@ export function FileUpload({
           onClick={() => input.current?.click()}
           className="inline-flex h-9 items-center gap-2 rounded-full bg-brand-600 px-4 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
         >
-          <Upload className="size-4" /> {busy ? "Uploading…" : label}
+          <Upload className="size-4" /> {busy ? t("Uploading…") : label}
         </button>
       ) : (
         <button
@@ -93,7 +95,7 @@ export function FileUpload({
           <span className="grid size-12 place-items-center rounded-full bg-brand-100 text-brand-600">
             <Upload className="size-5" />
           </span>
-          <span className="text-sm font-semibold text-brand-700">{busy ? "Uploading…" : label}</span>
+          <span className="text-sm font-semibold text-brand-700">{busy ? t("Uploading…") : label}</span>
           {hint && <span className="text-xs text-muted">{hint}</span>}
         </button>
       )}
@@ -103,6 +105,7 @@ export function FileUpload({
 }
 
 export function FileChip({ file, label, className }: { file: FileRef; label?: string; className?: string }) {
+  const t = useT();
   const isImage = file.type.startsWith("image/");
   const content = (
     <>
@@ -123,7 +126,7 @@ export function FileChip({ file, label, className }: { file: FileRef; label?: st
   );
   const cls = cn("flex min-w-0 items-center gap-3 rounded-xl border border-line bg-white p-2 pr-4", className);
   return file.url ? <PreviewableChip file={file} cls={cls}>{content}</PreviewableChip> : (
-    <div className={cls} title="Preview is available once files are stored in Supabase">
+    <div className={cls} title={t("Preview is available once files are stored in Supabase")}>
       {content}
     </div>
   );

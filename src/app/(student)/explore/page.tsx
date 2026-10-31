@@ -6,10 +6,12 @@ import { useMemo, useState } from "react";
 import { MapView, type MapMarker } from "@/components/map";
 import { ButtonLink, Card, Field, Select } from "@/components/ui";
 import { baht, cn } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 import { AREAS, CHULA, FACULTIES } from "@/lib/reference";
 import { useMe, useStore } from "@/lib/store";
 
 export default function ExplorePage() {
+  const t = useT();
   const me = useMe();
   const listings = useStore((s) => s.listings);
   const [faculty, setFaculty] = useState(me?.student?.faculty ?? "");
@@ -29,7 +31,7 @@ export default function ExplorePage() {
     lat: a.lat,
     lng: a.lng,
     kind: "area",
-    label: a.name,
+    label: t(a.name),
     sub: `${baht(a.priceFrom)}+`,
     active: a.id === areaId,
     onClick: () => setAreaId(a.id),
@@ -41,39 +43,39 @@ export default function ExplorePage() {
         {area ? (
           <div>
             <button onClick={() => setAreaId(null)} className="mb-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:underline">
-              <ArrowLeft className="size-4" /> All areas
+              <ArrowLeft className="size-4" /> {t("All areas")}
             </button>
-            <h1 className="text-2xl font-bold">{area.name}</h1>
-            <p className="mt-1 text-sm font-semibold text-brand-600">From {baht(area.priceFrom)} / month</p>
-            <p className="mt-3 text-sm leading-relaxed text-muted">{area.description}</p>
-            <h2 className="mb-2 mt-6 text-sm font-bold uppercase tracking-wider text-muted">Nearby</h2>
-            <NearbyGroup icon={ShoppingBasket} title="Grocery" items={area.nearby.grocery} />
-            <NearbyGroup icon={UtensilsCrossed} title="Dine out" items={area.nearby.dineout} />
-            <NearbyGroup icon={TrainFront} title="Transportation" items={area.nearby.transport} />
+            <h1 className="text-2xl font-bold">{t(area.name)}</h1>
+            <p className="mt-1 text-sm font-semibold text-brand-600">{t("From {price} / month", { price: baht(area.priceFrom) })}</p>
+            <p className="mt-3 text-sm leading-relaxed text-muted">{t(area.description)}</p>
+            <h2 className="mb-2 mt-6 text-sm font-bold uppercase tracking-wider text-muted">{t("Nearby")}</h2>
+            <NearbyGroup icon={ShoppingBasket} title={t("Grocery")} items={area.nearby.grocery} />
+            <NearbyGroup icon={UtensilsCrossed} title={t("Dine out")} items={area.nearby.dineout} />
+            <NearbyGroup icon={TrainFront} title={t("Transportation")} items={area.nearby.transport} />
             <ButtonLink href={`/rooms?tab=available&area=${area.id}`} className="mt-6 w-full">
-              See {roomsIn(area.id)} rooms in {area.name}
+              {t("See {count} rooms in {area}", { count: roomsIn(area.id), area: t(area.name) })}
             </ButtonLink>
           </div>
         ) : (
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-brand-600">Map</p>
-            <h1 className="mt-1 text-2xl font-bold">Explore each area</h1>
-            <p className="mt-1.5 text-sm text-muted">Get a feel for the neighbourhood, see what&apos;s nearby, and compare typical rents so you can pick an area that fits your lifestyle and budget.</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-brand-600">{t("Map")}</p>
+            <h1 className="mt-1 text-2xl font-bold">{t("Explore each area")}</h1>
+            <p className="mt-1.5 text-sm text-muted">{t("Get a feel for the neighbourhood, see what's nearby, and compare typical rents so you can pick an area that fits your lifestyle and budget.")}</p>
 
-            <Field label="Your faculty" className="mt-5">
+            <Field label={t("Your faculty")} className="mt-5">
               {(id) => (
                 <Select id={id} value={faculty} onChange={(e) => setFaculty(e.target.value)}>
-                  <option value="">Show all areas</option>
+                  <option value="">{t("Show all areas")}</option>
                   {FACULTIES.map((f) => (
                     <option key={f.id} value={f.id}>
-                      {f.name}
+                      {t(f.name)}
                     </option>
                   ))}
                 </Select>
               )}
             </Field>
 
-            <h2 className="mb-2 mt-5 text-sm font-bold">{faculty ? "We recommend" : "Recommended areas"}</h2>
+            <h2 className="mb-2 mt-5 text-sm font-bold">{faculty ? t("We recommend") : t("Recommended areas")}</h2>
             <ol className="space-y-2">
               {ordered.slice(0, recommendedCount).map((a, i) => (
                 <AreaRow key={a.id} n={i + 1} name={a.name} tagline={a.tagline} price={a.priceFrom} onClick={() => setAreaId(a.id)} />
@@ -81,7 +83,7 @@ export default function ExplorePage() {
             </ol>
             {faculty && ordered.length > recommendedCount && (
               <>
-                <h2 className="mb-2 mt-4 text-sm font-bold">Other options</h2>
+                <h2 className="mb-2 mt-4 text-sm font-bold">{t("Other options")}</h2>
                 <ol className="space-y-2">
                   {ordered.slice(recommendedCount).map((a) => (
                     <AreaRow key={a.id} name={a.name} tagline={a.tagline} price={a.priceFrom} onClick={() => setAreaId(a.id)} muted />
@@ -90,15 +92,15 @@ export default function ExplorePage() {
               </>
             )}
             <p className="mt-4 text-xs leading-relaxed text-muted">
-              Many students stay near BTS or MRT stations that are a little further away but generally cheaper.{" "}
+              {t("Many students stay near BTS or MRT stations that are a little further away but generally cheaper.")}{" "}
               <Link href="/train-map" className="font-semibold text-brand-700 underline">
-                See train station map
+                {t("See train station map")}
               </Link>
             </p>
             <div className="mt-5 rounded-xl bg-brand-50 p-4 text-center">
-              <p className="text-xs text-muted">Already comfortable with the areas?</p>
+              <p className="text-xs text-muted">{t("Already comfortable with the areas?")}</p>
               <ButtonLink href="/find-my-room" className="mt-2 w-full">
-                Let us find your room
+                {t("Let us find your room")}
               </ButtonLink>
             </div>
           </div>
@@ -112,14 +114,15 @@ export default function ExplorePage() {
 }
 
 function AreaRow({ n, name, tagline, price, onClick, muted }: { n?: number; name: string; tagline: string; price: number; onClick: () => void; muted?: boolean }) {
+  const t = useT();
   return (
     <li>
       <button onClick={onClick} className={cn("flex w-full items-center gap-3 rounded-xl border border-line p-3 text-left transition hover:border-brand-300 hover:bg-brand-50", muted ? "bg-white" : "bg-brand-50/40")}>
         {n !== undefined && <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-white text-lg font-bold text-brand-600 ring-1 ring-brand-100">{n}</span>}
         <span className="min-w-0 flex-1">
-          <span className="block text-sm font-bold">{name}</span>
-          <span className="block text-xs font-semibold text-brand-600">{baht(price)}++ THB</span>
-          <span className="block truncate text-xs text-muted">{tagline}</span>
+          <span className="block text-sm font-bold">{t(name)}</span>
+          <span className="block text-xs font-semibold text-brand-600">{t("{price}++ THB", { price: baht(price) })}</span>
+          <span className="block truncate text-xs text-muted">{t(tagline)}</span>
         </span>
         <ChevronRight className="size-4 text-muted" />
       </button>

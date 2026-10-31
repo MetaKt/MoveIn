@@ -1,12 +1,15 @@
 import { differenceInCalendarMonths, format, parseISO } from "date-fns";
+import { th } from "date-fns/locale";
 import clsx, { type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { getLang } from "./i18n";
 
 export const cn = (...v: ClassValue[]) => twMerge(clsx(v));
 
 export const baht = (n: number) => `฿${n.toLocaleString("en-US")}`;
 
-export const date = (iso: string, f = "d MMMM yyyy") => format(parseISO(iso), f);
+/** Formats a date in the visitor's language (Thai month names, Gregorian years). */
+export const date = (iso: string, f = "d MMMM yyyy") => format(parseISO(iso), f, getLang() === "th" ? { locale: th } : undefined);
 
 export const monthsLeft = (iso: string, from = new Date()) => Math.max(0, differenceInCalendarMonths(parseISO(iso), from));
 

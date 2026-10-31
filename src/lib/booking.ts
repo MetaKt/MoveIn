@@ -1,4 +1,5 @@
 import { addMonths, format, parseISO } from "date-fns";
+import { msg } from "./i18n";
 import type { Booking, Listing, RoomRequest, RoomType } from "./types";
 
 /** Move-out date is generated from move-in date plus the length of stay. */
@@ -57,16 +58,16 @@ export function bookingStep(stage: BookingStage): 0 | 1 | 2 | 3 {
 }
 
 export const STAGE_COPY: Record<BookingStage, { student: string; landlord: string }> = {
-  awaiting_landlord: { student: "Waiting for the landlord to confirm", landlord: "New request. Review and accept or decline." },
-  declined: { student: "The landlord declined this request", landlord: "You declined this request" },
-  cancelled: { student: "You cancelled this request", landlord: "The student cancelled this request" },
-  awaiting_bank_details: { student: "Confirmed! Waiting for payment details", landlord: "Add your bank details so the student can pay" },
-  awaiting_payment: { student: "Transfer the reservation and deposit", landlord: "Waiting for the student's transfer" },
-  awaiting_payment_confirmation: { student: "Slip uploaded. Waiting for the landlord to confirm", landlord: "Check your account and confirm you received the money" },
-  awaiting_contract: { student: "The landlord will upload a rental contract", landlord: "Upload your signed rental contract" },
-  awaiting_student_acceptance: { student: "Review the contract and accept it", landlord: "Waiting for the student to review the contract" },
-  awaiting_countersign: { student: "Countersign the contract and upload it", landlord: "Waiting for the student's countersigned contract" },
-  ready_to_move_in: { student: "All set. Ready to MoveIn!", landlord: "All set. Ready to welcome your student!" },
+  awaiting_landlord: { student: msg("Waiting for the landlord to confirm"), landlord: msg("New request. Review and accept or decline.") },
+  declined: { student: msg("The landlord declined this request"), landlord: msg("You declined this request") },
+  cancelled: { student: msg("You cancelled this request"), landlord: msg("The student cancelled this request") },
+  awaiting_bank_details: { student: msg("Confirmed! Waiting for payment details"), landlord: msg("Add your bank details so the student can pay") },
+  awaiting_payment: { student: msg("Transfer the reservation and deposit"), landlord: msg("Waiting for the student's transfer") },
+  awaiting_payment_confirmation: { student: msg("Slip uploaded. Waiting for the landlord to confirm"), landlord: msg("Check your account and confirm you received the money") },
+  awaiting_contract: { student: msg("The landlord will upload a rental contract"), landlord: msg("Upload your signed rental contract") },
+  awaiting_student_acceptance: { student: msg("Review the contract and accept it"), landlord: msg("Waiting for the student to review the contract") },
+  awaiting_countersign: { student: msg("Countersign the contract and upload it"), landlord: msg("Waiting for the student's countersigned contract") },
+  ready_to_move_in: { student: msg("All set. Ready to MoveIn!"), landlord: msg("All set. Ready to welcome your student!") },
 };
 
 export function totalDue(listing: Pick<Listing, "rent" | "deposit">): number {

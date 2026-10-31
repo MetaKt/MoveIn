@@ -4,26 +4,28 @@ import { LifeBuoy, Users } from "lucide-react";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { bookingStage, STAGE_COPY } from "@/lib/booking";
 import { date, fullName } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 import { useStore } from "@/lib/store";
 
 export default function AdminBookings() {
+  const t = useT();
   const bookings = useStore((s) => s.bookings);
   const users = useStore((s) => s.users);
   const listings = useStore((s) => s.listings);
 
   return (
     <div>
-      <PageHeader eyebrow="Admin" title="Bookings" subtitle="Every booking, who is moving in and who is moving out. Help requests are flagged." />
+      <PageHeader eyebrow={t("Admin")} title={t("Bookings")} subtitle={t("Every booking, who is moving in and who is moving out. Help requests are flagged.")} />
       <Card className="overflow-x-auto">
         <table className="w-full min-w-[760px] text-sm">
           <thead className="bg-brand-50 text-left text-xs uppercase tracking-wider text-muted">
             <tr>
-              <th className="px-4 py-3">Student</th>
-              <th className="px-4 py-3">Room</th>
-              <th className="px-4 py-3">Landlord</th>
-              <th className="px-4 py-3">Move in</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Flags</th>
+              <th className="px-4 py-3">{t("Student")}</th>
+              <th className="px-4 py-3">{t("Room")}</th>
+              <th className="px-4 py-3">{t("Landlord")}</th>
+              <th className="px-4 py-3">{t("Move in")}</th>
+              <th className="px-4 py-3">{t("Status")}</th>
+              <th className="px-4 py-3">{t("Flags")}</th>
             </tr>
           </thead>
           <tbody>
@@ -35,18 +37,18 @@ export default function AdminBookings() {
                   <td className="px-4 py-3">{listings.find((l) => l.id === b.listingId)?.building}</td>
                   <td className="px-4 py-3">{fullName(users.find((u) => u.id === b.landlordId))}</td>
                   <td className="px-4 py-3 tabular-nums">
-                    {date(b.moveIn, "d MMM yyyy")} · {b.months} mo
+                    {date(b.moveIn, "d MMM yyyy")} · {t("{months} mo", { months: b.months })}
                   </td>
-                  <td className="px-4 py-3">{STAGE_COPY[stage].landlord}</td>
+                  <td className="px-4 py-3">{t(STAGE_COPY[stage].landlord)}</td>
                   <td className="space-x-1 px-4 py-3">
                     {b.helpRequested && (
                       <Badge tone="amber">
-                        <LifeBuoy className="size-3" /> Student needs help
+                        <LifeBuoy className="size-3" /> {t("Student needs help")}
                       </Badge>
                     )}
                     {b.contractTeamRequested && (
                       <Badge tone="brand">
-                        <Users className="size-3" /> Contract team
+                        <Users className="size-3" /> {t("Contract team")}
                       </Badge>
                     )}
                   </td>
