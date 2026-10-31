@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { DemoBanner } from "@/components/app-shell";
 import { Hydrated } from "@/components/hydrated";
+import { LanguageSwitch } from "@/components/language-switch";
 import { Button, ButtonLink, Card, ChoiceTile, Field, Input, Logo, Select, Textarea } from "@/components/ui";
 import { cn } from "@/lib/format";
+import { msg, useT } from "@/lib/i18n";
 import { FOUND_VIA } from "@/lib/reference";
 import { useStore } from "@/lib/store";
 
@@ -16,10 +18,11 @@ export default function BecomeBuddyPage() {
   return (
     <div className="flex min-h-dvh flex-col">
       <DemoBanner />
-      <header className="flex justify-center py-6">
+      <header className="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 py-6">
         <Link href="/">
           <Logo size="lg" />
         </Link>
+        <LanguageSwitch />
       </header>
       <Hydrated>
         <BuddyApplication />
@@ -29,6 +32,7 @@ export default function BecomeBuddyPage() {
 }
 
 function BuddyApplication() {
+  const t = useT();
   const submit = useStore((s) => s.submitApplication);
   const [i, setI] = useState(0);
   const [sent, setSent] = useState(false);
@@ -55,11 +59,11 @@ function BuddyApplication() {
   const screen = SCREENS[i];
 
   const check = () => {
-    if (screen === "info" && (!f.firstName.trim() || !f.lastName.trim() || !f.faculty.trim())) return "Please fill in your name and faculty.";
-    if (screen === "contact" && (!/^\S+@\S+\.\S+$/.test(f.email) || f.whatsapp.replace(/\D/g, "").length < 8)) return "Add a valid email and your WhatsApp number.";
-    if (screen === "whyMoveIn" && f.whyMoveIn.trim().length < 10) return "Tell us a little more.";
-    if (screen === "whyBuddy" && f.whyBuddy.trim().length < 10) return "Tell us a little more.";
-    if (screen === "found" && !f.foundVia) return "Pick one option.";
+    if (screen === "info" && (!f.firstName.trim() || !f.lastName.trim() || !f.faculty.trim())) return t("Please fill in your name and faculty.");
+    if (screen === "contact" && (!/^\S+@\S+\.\S+$/.test(f.email) || f.whatsapp.replace(/\D/g, "").length < 8)) return t("Add a valid email and your WhatsApp number.");
+    if (screen === "whyMoveIn" && f.whyMoveIn.trim().length < 10) return t("Tell us a little more.");
+    if (screen === "whyBuddy" && f.whyBuddy.trim().length < 10) return t("Tell us a little more.");
+    if (screen === "found" && !f.foundVia) return t("Pick one option.");
     return "";
   };
   const next = () => {
@@ -74,11 +78,11 @@ function BuddyApplication() {
     return (
       <main className="mx-auto max-w-xl flex-1 px-4 py-16 text-center">
         <h1 className="text-3xl font-bold">
-          Thank you so much <span className="block text-brand-600">for applying to join our team!</span>
+          {t("Thank you so much")} <span className="block text-brand-600">{t("for applying to join our team!")}</span>
         </h1>
-        <p className="mt-4 text-muted">We&apos;re excited to get to know you! Our team will review your application and reach out to selected candidates via WhatsApp or email. Please keep an eye on your messages!</p>
+        <p className="mt-4 text-muted">{t("We're excited to get to know you! Our team will review your application and reach out to selected candidates via WhatsApp or email. Please keep an eye on your messages!")}</p>
         <ButtonLink href="/" className="mt-8">
-          Back to MoveIn
+          {t("Back to MoveIn")}
         </ButtonLink>
       </main>
     );
@@ -87,64 +91,64 @@ function BuddyApplication() {
     <>
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 pb-8">
         {screen === "intro" && (
-          <Split step="Step 1" title={<>Become a <Hl>Buddy</Hl></>} image="/illustrations/buddies.png">
-            You&apos;ll be the first point of contact for international students. You make sure their move-in is smooth, from choosing a room to arriving in Thailand. Open to Thai students only.
+          <Split step={t("Step {n}", { n: 1 })} title={hl(t("Become a [Buddy]"))} image="/illustrations/buddies.png">
+            {t("You'll be the first point of contact for international students. You make sure their move-in is smooth, from choosing a room to arriving in Thailand. Open to Thai students only.")}
           </Split>
         )}
         {screen === "before" && (
-          <Split title={<><Hl>Before</Hl> they arrive</>} sub="Your responsibility before they arrive" image="/illustrations/chat.png">
-            <Bullets items={["Chat with students online (WhatsApp)", "Help them pick a room", "Answer questions about life in Thailand: transport, food and local tips", "Follow up until they decide", "Coordinate basic check-in details"]} />
+          <Split title={hl(t("[Before] they arrive"))} sub={t("Your responsibility before they arrive")} image="/illustrations/chat.png">
+            <Bullets items={[msg("Chat with students online (WhatsApp)"), msg("Help them pick a room"), msg("Answer questions about life in Thailand: transport, food and local tips"), msg("Follow up until they decide"), msg("Coordinate basic check-in details")]} />
           </Split>
         )}
         {screen === "arrival" && (
-          <Split title={<>On <Hl>arrival day</Hl></>} sub="Be there in person for their first days in Thailand." image="/illustrations/arrive.jpg">
-            <Bullets items={["Welcome and assist the student", "Bring the contract for them to sign", "Stay a friendly local contact in their first days", "Feel free to make friends and chat after they arrive"]} />
+          <Split title={hl(t("On [arrival day]"))} sub={t("Be there in person for their first days in Thailand.")} image="/illustrations/arrive.jpg">
+            <Bullets items={[msg("Welcome and assist the student"), msg("Bring the contract for them to sign"), msg("Stay a friendly local contact in their first days"), msg("Feel free to make friends and chat after they arrive")]} />
           </Split>
         )}
         {screen === "limits" && (
           <div>
             <h1 className="text-3xl font-bold">
-              Know your <Hl>limits</Hl>
+              {hl(t("Know your [limits]"))}
             </h1>
-            <p className="mt-2 text-muted">Leave the paperwork to the MoveIn team, and keep these standards in every chat.</p>
+            <p className="mt-2 text-muted">{t("Leave the paperwork to the MoveIn team, and keep these standards in every chat.")}</p>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <Card className="border-red-200 bg-red-50 p-5">
                 <p className="font-bold">
-                  What you do <span className="text-red-600">not</span> need to handle
+                  {t("What you do not need to handle")}
                 </p>
-                <Bullets items={["Contract details", "Contract paperwork", "Legal documentation"]} />
+                <Bullets items={[msg("Contract details"), msg("Contract paperwork"), msg("Legal documentation")]} />
               </Card>
               <Card className="p-5">
                 <p className="font-bold">
-                  Performance <Hl>expectation</Hl>
+                  {hl(t("Performance [expectation]"))}
                 </p>
-                <Bullets items={["Clear communication in English", "Fast response time", "Professional and friendly attitude"]} />
+                <Bullets items={[msg("Clear communication in English"), msg("Fast response time"), msg("Professional and friendly attitude")]} />
               </Card>
             </div>
           </div>
         )}
         {screen === "step2" && (
-          <Split step="Step 2" title={<>Your <Hl>information</Hl></>} image="/illustrations/avatar.png">
-            We use your details to match you with the right students and keep everything running smoothly.
+          <Split step={t("Step {n}", { n: 2 })} title={hl(t("Your [information]"))} image="/illustrations/avatar.png">
+            {t("We use your details to match you with the right students and keep everything running smoothly.")}
           </Split>
         )}
         {screen === "info" && (
-          <Form title="Your information">
+          <Form title={t("Your information")}>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="First name">{(id) => <Input id={id} value={f.firstName} onChange={(e) => set("firstName", e.target.value)} />}</Field>
-              <Field label="Last name">{(id) => <Input id={id} value={f.lastName} onChange={(e) => set("lastName", e.target.value)} />}</Field>
-              <Field label="University" className="sm:col-span-2">
+              <Field label={t("First name")}>{(id) => <Input id={id} value={f.firstName} onChange={(e) => set("firstName", e.target.value)} />}</Field>
+              <Field label={t("Last name")}>{(id) => <Input id={id} value={f.lastName} onChange={(e) => set("lastName", e.target.value)} />}</Field>
+              <Field label={t("University")} className="sm:col-span-2">
                 {(id) => (
                   <Select id={id} value={f.university} onChange={(e) => set("university", e.target.value)}>
-                    <option>Chulalongkorn University</option>
-                    <option>Thammasat University</option>
-                    <option>Mahidol University</option>
-                    <option>Other Thai university</option>
+                    <option value="Chulalongkorn University">{t("Chulalongkorn University")}</option>
+                    <option value="Thammasat University">{t("Thammasat University")}</option>
+                    <option value="Mahidol University">{t("Mahidol University")}</option>
+                    <option value="Other Thai university">{t("Other Thai university")}</option>
                   </Select>
                 )}
               </Field>
-              <Field label="Faculty">{(id) => <Input id={id} value={f.faculty} onChange={(e) => set("faculty", e.target.value)} />}</Field>
-              <Field label="Year">
+              <Field label={t("Faculty")}>{(id) => <Input id={id} value={f.faculty} onChange={(e) => set("faculty", e.target.value)} />}</Field>
+              <Field label={t("Year")}>
                 {(id) => (
                   <Select id={id} value={f.year} onChange={(e) => set("year", Number(e.target.value))}>
                     {[1, 2, 3, 4, 5, 6].map((y) => (
@@ -157,12 +161,12 @@ function BuddyApplication() {
           </Form>
         )}
         {screen === "contact" && (
-          <Form title="Contact information">
+          <Form title={t("Contact information")}>
             <div className="space-y-4">
-              <Field label="Email">{(id) => <Input id={id} type="email" value={f.email} onChange={(e) => set("email", e.target.value)} />}</Field>
-              <Field label="Phone">{(id) => <Input id={id} type="tel" value={f.phone} onChange={(e) => set("phone", e.target.value)} />}</Field>
+              <Field label={t("Email")}>{(id) => <Input id={id} type="email" value={f.email} onChange={(e) => set("email", e.target.value)} />}</Field>
+              <Field label={t("Phone")}>{(id) => <Input id={id} type="tel" value={f.phone} onChange={(e) => set("phone", e.target.value)} />}</Field>
               <div className="grid grid-cols-[1fr_1.4fr] gap-3">
-                <Field label="Other contact channel">
+                <Field label={t("Other contact channel")}>
                   {(id) => (
                     <Select id={id} value={f.otherChannel} onChange={(e) => set("otherChannel", e.target.value)}>
                       <option>LINE</option>
@@ -171,38 +175,38 @@ function BuddyApplication() {
                     </Select>
                   )}
                 </Field>
-                <Field label="ID">{(id) => <Input id={id} value={f.otherId} onChange={(e) => set("otherId", e.target.value)} />}</Field>
+                <Field label={t("ID")}>{(id) => <Input id={id} value={f.otherId} onChange={(e) => set("otherId", e.target.value)} />}</Field>
               </div>
-              <Field label="WhatsApp number" hint="WhatsApp is our main channel with the MoveIn team and exchange students. Please have it installed on your phone.">
+              <Field label={t("WhatsApp number")} hint={t("WhatsApp is our main channel with the MoveIn team and exchange students. Please have it installed on your phone.")}>
                 {(id) => <Input id={id} type="tel" placeholder="+66 81 234 5678" value={f.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} />}
               </Field>
             </div>
           </Form>
         )}
         {screen === "step3" && (
-          <Split step="Step 3" title={<>Your <Hl>motivation</Hl></>} image="/illustrations/climb.png">
-            Tell us how you found MoveIn and why you&apos;d like to be a buddy.
+          <Split step={t("Step {n}", { n: 3 })} title={hl(t("Your [motivation]"))} image="/illustrations/climb.png">
+            {t("Tell us how you found MoveIn and why you'd like to be a buddy.")}
           </Split>
         )}
         {screen === "whyMoveIn" && (
-          <Form title="Your motivation">
-            <Field label="Why are you interested in MoveIn?">
-              {(id) => <Textarea id={id} rows={7} maxLength={1000} placeholder="What about MoveIn stood out to you? It could be our mission, our service, or the chance to help students settle in." value={f.whyMoveIn} onChange={(e) => set("whyMoveIn", e.target.value)} />}
+          <Form title={t("Your motivation")}>
+            <Field label={t("Why are you interested in MoveIn?")}>
+              {(id) => <Textarea id={id} rows={7} maxLength={1000} placeholder={t("What about MoveIn stood out to you? It could be our mission, our service, or the chance to help students settle in.")} value={f.whyMoveIn} onChange={(e) => set("whyMoveIn", e.target.value)} />}
             </Field>
           </Form>
         )}
         {screen === "whyBuddy" && (
-          <Form title="Your motivation">
-            <Field label="Why do you want to become an exchange buddy?">
-              {(id) => <Textarea id={id} rows={7} maxLength={1000} placeholder="What do you hope to gain or give as a buddy? Meeting new people, helping students feel at home, building experience…" value={f.whyBuddy} onChange={(e) => set("whyBuddy", e.target.value)} />}
+          <Form title={t("Your motivation")}>
+            <Field label={t("Why do you want to become an exchange buddy?")}>
+              {(id) => <Textarea id={id} rows={7} maxLength={1000} placeholder={t("What do you hope to gain or give as a buddy? Meeting new people, helping students feel at home, building experience…")} value={f.whyBuddy} onChange={(e) => set("whyBuddy", e.target.value)} />}
             </Field>
           </Form>
         )}
         {screen === "found" && (
-          <Form title={<>How did you <Hl>find us</Hl>?</>}>
+          <Form title={hl(t("How did you [find us]?"))}>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {FOUND_VIA.map((x) => (
-                <ChoiceTile key={x} title={x} selected={f.foundVia === x} onClick={() => set("foundVia", x)} />
+                <ChoiceTile key={x} title={t(x)} selected={f.foundVia === x} onClick={() => set("foundVia", x)} />
               ))}
             </div>
           </Form>
@@ -217,10 +221,10 @@ function BuddyApplication() {
           </div>
           <div className="flex items-center justify-between gap-3">
             <Button variant="ghost" disabled={i === 0} onClick={() => setI(i - 1)}>
-              Back
+              {t("Back")}
             </Button>
             {error && <p className="text-sm font-medium text-red-600">{error}</p>}
-            <Button onClick={next}>{i === SCREENS.length - 1 ? "Submit application" : "Next"}</Button>
+            <Button onClick={next}>{i === SCREENS.length - 1 ? t("Submit application") : t("Next")}</Button>
           </div>
         </div>
       </footer>
@@ -229,6 +233,9 @@ function BuddyApplication() {
 }
 
 const Hl = ({ children }: { children: ReactNode }) => <span className="text-brand-600">{children}</span>;
+
+/** Renders "Become a [Buddy]" with the bracketed words highlighted, so each language can place them. */
+const hl = (text: string) => text.split(/\[(.+?)\]/).map((part, i) => (i % 2 ? <Hl key={i}>{part}</Hl> : part));
 
 function Split({ step, title, sub, image, children }: { step?: string; title: ReactNode; sub?: string; image: string; children: ReactNode }) {
   return (
@@ -255,10 +262,11 @@ function Form({ title, children }: { title: ReactNode; children: ReactNode }) {
 }
 
 function Bullets({ items }: { items: string[] }) {
+  const t = useT();
   return (
     <ul className="mt-3 list-disc space-y-1 rounded-2xl bg-brand-50 p-5 pl-9 text-sm">
       {items.map((x) => (
-        <li key={x}>{x}</li>
+        <li key={x}>{t(x)}</li>
       ))}
     </ul>
   );

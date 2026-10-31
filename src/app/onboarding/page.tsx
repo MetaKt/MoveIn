@@ -5,8 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { DemoBanner } from "@/components/app-shell";
 import { Hydrated } from "@/components/hydrated";
+import { LanguageSwitch } from "@/components/language-switch";
 import { Button, Card, Field, Input, Logo, Progress, Select } from "@/components/ui";
 import { safeNext } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 import { COUNTRIES, FACULTIES } from "@/lib/reference";
 import { useStore } from "@/lib/store";
 import type { StudentProfile } from "@/lib/types";
@@ -18,9 +20,12 @@ export default function OnboardingPage() {
     <div className="min-h-dvh">
       <DemoBanner />
       <div className="mx-auto max-w-xl px-4 py-10">
-        <Link href="/" className="flex justify-center">
-          <Logo size="lg" />
-        </Link>
+        <div className="flex items-center justify-between gap-4">
+          <Link href="/">
+            <Logo size="lg" />
+          </Link>
+          <LanguageSwitch />
+        </div>
         <Suspense>
           <Hydrated>
             <Onboarding />
@@ -32,6 +37,7 @@ export default function OnboardingPage() {
 }
 
 function Onboarding() {
+  const t = useT();
   const router = useRouter();
   const next = useSearchParams().get("next");
   const register = useStore((s) => s.registerStudent);
@@ -54,17 +60,17 @@ function Onboarding() {
   const validate = (s: number) => {
     const e: Record<string, string> = {};
     if (s === 0) {
-      if (!f.firstName.trim()) e.firstName = "Required";
-      if (!f.lastName.trim()) e.lastName = "Required";
-      if (!EMAIL.test(f.email)) e.email = "Enter a valid email";
-      if (f.whatsapp.replace(/\D/g, "").length < 8) e.whatsapp = "Include your country code, e.g. +45 20 12 34 56";
+      if (!f.firstName.trim()) e.firstName = t("Required");
+      if (!f.lastName.trim()) e.lastName = t("Required");
+      if (!EMAIL.test(f.email)) e.email = t("Enter a valid email");
+      if (f.whatsapp.replace(/\D/g, "").length < 8) e.whatsapp = t("Include your country code, e.g. +45 20 12 34 56");
     } else {
-      if (!f.gender) e.gender = "Required";
+      if (!f.gender) e.gender = t("Required");
       const age = Number(f.age);
-      if (!age || age < 16 || age > 80) e.age = "Enter your age";
-      if (!f.country) e.country = "Required";
-      if (!f.homeUniversity.trim()) e.homeUniversity = "Required";
-      if (!f.faculty) e.faculty = "Required";
+      if (!age || age < 16 || age > 80) e.age = t("Enter your age");
+      if (!f.country) e.country = t("Required");
+      if (!f.homeUniversity.trim()) e.homeUniversity = t("Required");
+      if (!f.faculty) e.faculty = t("Required");
     }
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -94,72 +100,74 @@ function Onboarding() {
       {step === 0 ? (
         <div className="mt-6 space-y-4">
           <div>
-            <h1 className="text-xl font-bold">Create your account</h1>
-            <p className="text-sm text-muted">WhatsApp is our main channel with you, your buddy and your landlord.</p>
+            <h1 className="text-xl font-bold">{t("Create your account")}</h1>
+            <p className="text-sm text-muted">{t("WhatsApp is our main channel with you, your buddy and your landlord.")}</p>
           </div>
-          <button type="button" disabled className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-line bg-white text-sm font-semibold text-muted" title="Available once Supabase Auth is connected">
-            <span className="font-bold text-[#4285F4]">G</span> Continue with Google <span className="text-xs">(coming with launch)</span>
+          <button type="button" disabled className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-line bg-white text-sm font-semibold text-muted" title={t("Available once Supabase Auth is connected")}>
+            <span className="font-bold text-[#4285F4]">G</span> {t("Continue with Google")} <span className="text-xs">{t("(coming with launch)")}</span>
           </button>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="First name" error={errors.firstName}>
+            <Field label={t("First name")} error={errors.firstName}>
               {(id) => <Input id={id} autoComplete="given-name" value={f.firstName} onChange={(e) => set("firstName", e.target.value)} />}
             </Field>
-            <Field label="Last name" error={errors.lastName}>
+            <Field label={t("Last name")} error={errors.lastName}>
               {(id) => <Input id={id} autoComplete="family-name" value={f.lastName} onChange={(e) => set("lastName", e.target.value)} />}
             </Field>
           </div>
-          <Field label="Email" error={errors.email}>
+          <Field label={t("Email")} error={errors.email}>
             {(id) => <Input id={id} type="email" autoComplete="email" value={f.email} onChange={(e) => set("email", e.target.value)} />}
           </Field>
-          <Field label="WhatsApp number" error={errors.whatsapp}>
+          <Field label={t("WhatsApp number")} error={errors.whatsapp}>
             {(id) => <Input id={id} type="tel" autoComplete="tel" placeholder="+45 20 12 34 56" value={f.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} />}
           </Field>
           <Button size="lg" className="w-full" onClick={() => validate(0) && setStep(1)}>
-            Next
+            {t("Next")}
           </Button>
         </div>
       ) : (
         <div className="mt-6 space-y-4">
           <div>
-            <h1 className="text-xl font-bold">A little about you</h1>
-            <p className="text-sm text-muted">This helps us recommend areas near your faculty and match you with the right buddy.</p>
+            <h1 className="text-xl font-bold">{t("A little about you")}</h1>
+            <p className="text-sm text-muted">{t("This helps us recommend areas near your faculty and match you with the right buddy.")}</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Gender" error={errors.gender}>
+            <Field label={t("Gender")} error={errors.gender}>
               {(id) => (
                 <Select id={id} value={f.gender} onChange={(e) => set("gender", e.target.value as StudentProfile["gender"])}>
-                  <option value="">Select</option>
-                  <option value="female">Female</option>
-                  <option value="male">Male</option>
-                  <option value="non-binary">Non-binary</option>
-                  <option value="prefer-not">Prefer not to say</option>
+                  <option value="">{t("Select")}</option>
+                  <option value="female">{t("Female")}</option>
+                  <option value="male">{t("Male")}</option>
+                  <option value="non-binary">{t("Non-binary")}</option>
+                  <option value="prefer-not">{t("Prefer not to say")}</option>
                 </Select>
               )}
             </Field>
-            <Field label="Age" error={errors.age}>
+            <Field label={t("Age")} error={errors.age}>
               {(id) => <Input id={id} type="number" inputMode="numeric" value={f.age} onChange={(e) => set("age", e.target.value)} />}
             </Field>
           </div>
-          <Field label="Where are you from?" error={errors.country}>
+          <Field label={t("Where are you from?")} error={errors.country}>
             {(id) => (
               <Select id={id} value={f.country} onChange={(e) => set("country", e.target.value)}>
-                <option value="">Select country</option>
+                <option value="">{t("Select country")}</option>
                 {COUNTRIES.map((c) => (
-                  <option key={c.code}>{c.name}</option>
+                  <option key={c.code} value={c.name}>
+                    {t(c.name)}
+                  </option>
                 ))}
               </Select>
             )}
           </Field>
-          <Field label="Home university" error={errors.homeUniversity}>
+          <Field label={t("Home university")} error={errors.homeUniversity}>
             {(id) => <Input id={id} value={f.homeUniversity} onChange={(e) => set("homeUniversity", e.target.value)} />}
           </Field>
-          <Field label="Which faculty are you joining at Chula?" error={errors.faculty}>
+          <Field label={t("Which faculty are you joining at Chula?")} error={errors.faculty}>
             {(id) => (
               <Select id={id} value={f.faculty} onChange={(e) => set("faculty", e.target.value)}>
-                <option value="">Select faculty</option>
+                <option value="">{t("Select faculty")}</option>
                 {FACULTIES.map((x) => (
                   <option key={x.id} value={x.id}>
-                    {x.name}
+                    {t(x.name)}
                   </option>
                 ))}
               </Select>
@@ -168,19 +176,19 @@ function Onboarding() {
           <label className="flex items-start gap-3 rounded-xl border border-line p-3 text-sm">
             <input type="checkbox" checked={f.notifications} onChange={(e) => set("notifications", e.target.checked)} className="mt-0.5 size-4 accent-brand-600" />
             <span>
-              <span className="block font-semibold">Allow notifications</span>
-              <span className="text-muted">Get an email and WhatsApp message whenever a landlord proposes a room for you.</span>
+              <span className="block font-semibold">{t("Allow notifications")}</span>
+              <span className="text-muted">{t("Get an email and WhatsApp message whenever a landlord proposes a room for you.")}</span>
             </span>
           </label>
           <div className="flex gap-3">
             <Button variant="secondary" size="lg" onClick={() => setStep(0)}>
-              Back
+              {t("Back")}
             </Button>
             <Button size="lg" className="flex-1" onClick={finish}>
-              Create account
+              {t("Create account")}
             </Button>
           </div>
-          <p className="text-center text-xs text-muted">By continuing you agree to MoveIn&apos;s terms and privacy policy.</p>
+          <p className="text-center text-xs text-muted">{t("By continuing you agree to MoveIn's terms and privacy policy.")}</p>
         </div>
       )}
     </Card>

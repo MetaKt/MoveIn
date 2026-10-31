@@ -7,11 +7,13 @@ import { StatusPill } from "@/components/booking-steps";
 import { ButtonLink, EmptyState, PageHeader } from "@/components/ui";
 import { bookingStage, STAGE_COPY } from "@/lib/booking";
 import { baht, date } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 import { useMe, useStore } from "@/lib/store";
 
 const STUDENT_ACTION = new Set(["awaiting_payment", "awaiting_student_acceptance", "awaiting_countersign"]);
 
 export default function BookingsPage() {
+  const t = useT();
   const me = useMe();
   const all = useStore((s) => s.bookings);
   const listings = useStore((s) => s.listings);
@@ -19,15 +21,15 @@ export default function BookingsPage() {
 
   if (!me)
     return (
-      <EmptyState image="/illustrations/arrive.jpg" title="Sign in to see your bookings" action={<ButtonLink href="/signin?next=/bookings">Sign in</ButtonLink>} />
+      <EmptyState image="/illustrations/arrive.jpg" title={t("Sign in to see your bookings")} action={<ButtonLink href="/signin?next=/bookings">{t("Sign in")}</ButtonLink>} />
     );
 
   return (
     <div>
-      <PageHeader eyebrow="My bookings" title="Your booking requests" subtitle="Track every step from request to move-in day." />
+      <PageHeader eyebrow={t("My bookings")} title={t("Your booking requests")} subtitle={t("Track every step from request to move-in day.")} />
       {mine.length === 0 ? (
-        <EmptyState image="/illustrations/study.png" title="No bookings yet" action={<ButtonLink href="/rooms?tab=available">Browse rooms</ButtonLink>}>
-          When you request a room, you&apos;ll follow its progress here.
+        <EmptyState image="/illustrations/study.png" title={t("No bookings yet")} action={<ButtonLink href="/rooms?tab=available">{t("Browse rooms")}</ButtonLink>}>
+          {t("When you request a room, you'll follow its progress here.")}
         </EmptyState>
       ) : (
         <ul className="space-y-3">
@@ -42,11 +44,11 @@ export default function BookingsPage() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-bold">{l?.building}</p>
                     <p className="text-xs text-muted">
-                      {date(b.moveIn, "d MMM yyyy")} · {b.months} months · {l && baht(l.rent)}/mo
+                      {date(b.moveIn, "d MMM yyyy")} · {t("{months} months", { months: b.months })} · {l && t("{price}/mo", { price: baht(l.rent) })}
                     </p>
                     <div className="mt-2">
                       <StatusPill tone={stage === "ready_to_move_in" ? "done" : stage === "declined" || stage === "cancelled" ? "stopped" : STUDENT_ACTION.has(stage) ? "action" : "waiting"}>
-                        {STAGE_COPY[stage].student}
+                        {t(STAGE_COPY[stage].student)}
                       </StatusPill>
                     </div>
                   </div>

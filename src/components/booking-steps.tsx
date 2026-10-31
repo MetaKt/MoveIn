@@ -1,6 +1,9 @@
+"use client";
+
 import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 /** One numbered step block (deck: "STEP 1 - Transfer Reservation and Deposit"). */
 export function StepCard({
@@ -14,6 +17,7 @@ export function StepCard({
   state: "done" | "current" | "locked";
   children?: ReactNode;
 }) {
+  const t = useT();
   return (
     <section
       className={cn(
@@ -33,7 +37,7 @@ export function StepCard({
           {state === "done" ? <Check className="size-4" /> : n}
         </span>
         <h2 className="text-base font-bold">
-          <span className="mr-1 text-xs font-bold uppercase tracking-wider text-muted">Step {n} ·</span> {title}
+          <span className="mr-1 text-xs font-bold uppercase tracking-wider text-muted">{t("Step {n}", { n })} ·</span> {title}
         </h2>
       </div>
       {state !== "locked" && children && <div className="mt-4 space-y-4 pl-0 sm:pl-11">{children}</div>}

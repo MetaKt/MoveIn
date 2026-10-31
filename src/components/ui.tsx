@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { forwardRef, useId, type ComponentProps, type ReactNode } from "react";
 import { cn } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 /* ---------- Logo ---------- */
 
@@ -191,8 +192,9 @@ export function Tabs<T extends string>({ value, onChange, items }: { value: T; o
 
 /** Segmented progress bar used in multi-step flows (matches the deck). */
 export function Progress({ total, current }: { total: number; current: number }) {
+  const t = useT();
   return (
-    <div className="flex gap-2" aria-label={`Step ${current + 1} of ${total}`}>
+    <div className="flex gap-2" aria-label={t("Step {n} of {total}", { n: current + 1, total })}>
       {Array.from({ length: total }, (_, i) => (
         <span key={i} className={cn("h-1.5 flex-1 rounded-full transition-colors", i <= current ? "bg-brand-600" : "bg-brand-100")} />
       ))}
@@ -201,15 +203,16 @@ export function Progress({ total, current }: { total: number; current: number })
 }
 
 export function Stepper({ value, onChange, min = 0, max = 20, label }: { value: number; onChange: (n: number) => void; min?: number; max?: number; label: string }) {
+  const t = useT();
   return (
     <div className="flex items-center justify-between border-b border-line py-3">
       <span className="text-sm font-medium">{label}</span>
       <span className="flex items-center gap-3">
-        <button type="button" aria-label={`Fewer ${label}`} disabled={value <= min} onClick={() => onChange(value - 1)} className="grid size-8 place-items-center rounded-full bg-brand-50 text-brand-700 disabled:opacity-40">
+        <button type="button" aria-label={t("Fewer: {label}", { label })} disabled={value <= min} onClick={() => onChange(value - 1)} className="grid size-8 place-items-center rounded-full bg-brand-50 text-brand-700 disabled:opacity-40">
           −
         </button>
         <span className="w-5 text-center text-sm font-semibold tabular-nums">{value}</span>
-        <button type="button" aria-label={`More ${label}`} disabled={value >= max} onClick={() => onChange(value + 1)} className="grid size-8 place-items-center rounded-full bg-brand-50 text-brand-700 disabled:opacity-40">
+        <button type="button" aria-label={t("More: {label}", { label })} disabled={value >= max} onClick={() => onChange(value + 1)} className="grid size-8 place-items-center rounded-full bg-brand-50 text-brand-700 disabled:opacity-40">
           +
         </button>
       </span>
@@ -234,4 +237,9 @@ export function Notice({ tone = "info", children, className }: { tone?: "info" |
     success: "border-emerald-200 bg-emerald-50 text-emerald-900",
   };
   return <div className={cn("rounded-xl border px-4 py-3 text-sm", tones[tone], className)}>{children}</div>;
+}
+
+/** Renders "Your [profile]" with the bracketed words in brand blue, so each language can place them. */
+export function hl(text: string) {
+  return text.split(/\[(.+?)\]/).map((part, i) => (i % 2 ? <span key={i} className="text-brand-600">{part}</span> : part));
 }

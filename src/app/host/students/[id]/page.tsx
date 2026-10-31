@@ -7,10 +7,12 @@ import { useMemo, useState } from "react";
 import { Avatar, Badge, Button, ButtonLink, Card, EmptyState } from "@/components/ui";
 import { matchScore } from "@/lib/booking";
 import { baht, cn, date, flag, fullName } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 import { AREAS, FACULTIES, ROOM_TYPE_LABEL } from "@/lib/reference";
 import { useMe, useStore } from "@/lib/store";
 
 export default function StudentRequestPage() {
+  const t = useT();
   const { id } = useParams<{ id: string }>();
   const me = useMe()!;
   const req = useStore((s) => s.requests.find((r) => r.id === id));
@@ -32,12 +34,12 @@ export default function StudentRequestPage() {
     [listings, proposals, req, me.id],
   );
 
-  if (!req || !student) return <EmptyState title="Request not found" action={<ButtonLink href="/host/students">Student list</ButtonLink>} />;
+  if (!req || !student) return <EmptyState title={t("Request not found")} action={<ButtonLink href="/host/students">{t("Student list")}</ButtonLink>} />;
 
   if (done)
     return (
-      <EmptyState image="/illustrations/handover.jpg" title={`Successfully proposed to ${student.firstName}!`} action={<ButtonLink href="/host/students">Back to student list</ButtonLink>}>
-        {student.firstName} gets an email and WhatsApp message. If they like your room, they&apos;ll send you a booking request.
+      <EmptyState image="/illustrations/handover.jpg" title={t("Successfully proposed to {name}!", { name: student.firstName })} action={<ButtonLink href="/host/students">{t("Back to student list")}</ButtonLink>}>
+        {t("{name} gets an email and WhatsApp message. If they like your room, they'll send you a booking request.", { name: student.firstName })}
       </EmptyState>
     );
 
@@ -45,7 +47,7 @@ export default function StudentRequestPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <Link href="/host/students" className="mb-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:underline">
-        <ArrowLeft className="size-4" /> Student list
+        <ArrowLeft className="size-4" /> {t("Student list")}
       </Link>
       <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
         <Card className="h-fit p-5">
@@ -56,29 +58,32 @@ export default function StudentRequestPage() {
                 {fullName(student)} {sp && flag(sp.countryCode)}
               </p>
               <p className="text-sm text-muted">
-                {sp?.homeUniversity} · {FACULTIES.find((f) => f.id === sp?.faculty)?.name}
+                {sp?.homeUniversity} · {t(FACULTIES.find((f) => f.id === sp?.faculty)?.name ?? "")}
               </p>
             </div>
           </div>
           <dl className="mt-5 space-y-3 text-sm">
-            <Row k="Length of stay" v={`${req.months} months`} />
-            <Row k="Move-in date" v={date(req.moveIn)} />
-            <Row k="Move-out (auto-generated)" v={date(req.moveOut)} />
-            <Row k="Preferred room type" v={req.roomTypes.map((t) => ROOM_TYPE_LABEL[t]).join(", ")} />
-            <Row k="People" v={`${req.occupants}`} />
-            <Row k="Monthly budget" v={baht(req.budget)} />
-            <Row k="Areas" v={req.areaIds.length ? req.areaIds.map((a) => AREAS.find((x) => x.id === a)?.name).join(", ") : "Anywhere near campus"} />
-            <Row k="Building facilities" v={req.facilities || "—"} />
+            <Row k={t("Length of stay")} v={t("{months} months", { months: req.months })} />
+            <Row k={t("Move-in date")} v={date(req.moveIn)} />
+            <Row k={t("Move-out (auto-generated)")} v={date(req.moveOut)} />
+            <Row k={t("Preferred room type")} v={req.roomTypes.map((rt) => t(ROOM_TYPE_LABEL[rt])).join(", ")} />
+            <Row k={t("People")} v={`${req.occupants}`} />
+            <Row k={t("Monthly budget")} v={baht(req.budget)} />
+            <Row
+              k={t("Areas")}
+              v={req.areaIds.length ? req.areaIds.map((a) => t(AREAS.find((x) => x.id === a)?.name ?? "")).join(", ") : t("Anywhere near campus")}
+            />
+            <Row k={t("Building facilities")} v={req.facilities || "—"} />
           </dl>
           {req.notes && <p className="mt-4 rounded-xl bg-brand-50 p-3 text-sm">&ldquo;{req.notes}&rdquo;</p>}
-          <p className="mt-4 text-xs text-muted">You&apos;ll get the student&apos;s passport after you accept a booking and proceed with the contract.</p>
+          <p className="mt-4 text-xs text-muted">{t("You'll get the student's passport after you accept a booking and proceed with the contract.")}</p>
         </Card>
 
         <div>
-          <h2 className="text-lg font-bold">Propose your room(s)</h2>
-          <p className="mb-3 text-sm text-muted">Select one or more rooms. Best fits are at the top.</p>
+          <h2 className="text-lg font-bold">{t("Propose your room(s)")}</h2>
+          <p className="mb-3 text-sm text-muted">{t("Select one or more rooms. Best fits are at the top.")}</p>
           {mine.length === 0 ? (
-            <EmptyState title="You have no rooms on the market" action={<ButtonLink href="/host/new">Add a room</ButtonLink>} />
+            <EmptyState title={t("You have no rooms on the market")} action={<ButtonLink href="/host/new">{t("Add a room")}</ButtonLink>} />
           ) : (
             <div className="space-y-3">
               {mine.map(({ l, score, proposed }) => {
@@ -95,15 +100,15 @@ export default function StudentRequestPage() {
                     <span className="min-w-0 flex-1">
                       <span className="block font-bold">{l.building}</span>
                       <span className="block text-xs text-muted">
-                        {l.sizeSqm} m² · {ROOM_TYPE_LABEL[l.roomType]} · Available {date(l.availableFrom, "d MMM yyyy")}
+                        {l.sizeSqm} m² · {t(ROOM_TYPE_LABEL[l.roomType])} · {t("Available {date}", { date: date(l.availableFrom, "d MMM yyyy") })}
                       </span>
                       <span className="mt-1 block text-sm font-bold text-brand-600">{baht(l.rent)}</span>
                     </span>
                     {proposed ? (
-                      <Badge tone="gray">Proposed</Badge>
+                      <Badge tone="gray">{t("Proposed")}</Badge>
                     ) : (
                       <span className="flex flex-col items-end gap-2">
-                        <Badge tone={score >= 70 ? "brand" : "gray"}>{score}% fit</Badge>
+                        <Badge tone={score >= 70 ? "brand" : "gray"}>{t("{score}% fit", { score })}</Badge>
                         <span className={cn("grid size-6 place-items-center rounded-md border-2", on ? "border-brand-600 bg-brand-600 text-white" : "border-line")}>{on && <Check className="size-4" />}</span>
                       </span>
                     )}
@@ -119,7 +124,10 @@ export default function StudentRequestPage() {
                   setDone(true);
                 }}
               >
-                <CircleCheckBig className="size-4" /> Propose {selected.length > 1 ? `${selected.length} rooms` : "my room"} to {student.firstName}
+                <CircleCheckBig className="size-4" />{" "}
+                {selected.length > 1
+                  ? t("Propose {count} rooms to {name}", { count: selected.length, name: student.firstName })
+                  : t("Propose my room to {name}", { name: student.firstName })}
               </Button>
             </div>
           )}

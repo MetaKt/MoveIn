@@ -5,8 +5,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type ComponentType, type ReactNode } from "react";
 import { Hydrated } from "@/components/hydrated";
+import { LanguageSwitch } from "@/components/language-switch";
 import { Avatar, ButtonLink, Logo } from "@/components/ui";
 import { cn, fullName } from "@/lib/format";
+import { msg, useT } from "@/lib/i18n";
 import { useMe, useStore } from "@/lib/store";
 import type { Role } from "@/lib/types";
 
@@ -16,6 +18,13 @@ export interface NavItem {
   icon: ComponentType<{ className?: string }>;
   exact?: boolean;
 }
+
+export const ROLE_LABEL: Record<Role, string> = {
+  student: msg("Student"),
+  landlord: msg("Landlord / host"),
+  buddy: msg("Buddy"),
+  admin: msg("MoveIn team"),
+};
 
 const HOME_FOR: Record<Role, string> = { student: "/explore", landlord: "/host", buddy: "/buddy-portal", admin: "/admin" };
 export const homeFor = (r: Role) => HOME_FOR[r];
@@ -33,6 +42,7 @@ export function AppShell({
   /** Extra card at the bottom of the sidebar. */
   aside?: ReactNode;
 }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   useEffect(() => setOpen(false), [pathname]);
@@ -57,7 +67,7 @@ export function AppShell({
             <div className="absolute inset-y-0 left-0 flex w-72 flex-col bg-white px-4 py-6 shadow-xl">
               <div className="mb-8 flex items-center justify-between px-2">
                 <Logo />
-                <button aria-label="Close menu" onClick={() => setOpen(false)} className="grid size-9 place-items-center rounded-full hover:bg-brand-50">
+                <button aria-label={t("Close menu")} onClick={() => setOpen(false)} className="grid size-9 place-items-center rounded-full hover:bg-brand-50">
                   <X className="size-5" />
                 </button>
               </div>
@@ -69,13 +79,14 @@ export function AppShell({
 
         <div className="min-w-0 flex-1">
           <header className="sticky top-0 z-[800] flex h-16 items-center gap-3 border-b border-line bg-canvas/85 px-4 backdrop-blur sm:px-6 lg:border-none lg:bg-transparent lg:backdrop-blur-none">
-            <button aria-label="Open menu" onClick={() => setOpen(true)} className="grid size-10 place-items-center rounded-full bg-white ring-1 ring-line lg:hidden">
+            <button aria-label={t("Open menu")} onClick={() => setOpen(true)} className="grid size-10 place-items-center rounded-full bg-white ring-1 ring-line lg:hidden">
               <Menu className="size-5 text-brand-700" />
             </button>
             <Link href="/" className="lg:hidden">
               <Logo size="sm" />
             </Link>
             <div className="ml-auto flex items-center gap-2">
+              <LanguageSwitch />
               <Hydrated fallback={null}>
                 <Notifications />
                 <ProfileMenu />
@@ -92,6 +103,7 @@ export function AppShell({
 }
 
 function SideNav({ nav }: { nav: NavItem[] }) {
+  const t = useT();
   const pathname = usePathname();
   return (
     <nav className="space-y-1">
@@ -107,7 +119,7 @@ function SideNav({ nav }: { nav: NavItem[] }) {
             )}
           >
             <Icon className="size-5" />
-            {label}
+            {t(label)}
           </Link>
         );
       })}
@@ -116,22 +128,29 @@ function SideNav({ nav }: { nav: NavItem[] }) {
 }
 
 function RoleGate({ role, children }: { role: Role; children: ReactNode }) {
+  const t = useT();
   const me = useMe();
   const pathname = usePathname();
   if (me?.role === role) return <>{children}</>;
-  const who = { student: "students", landlord: "landlords", buddy: "buddies", admin: "the MoveIn team" }[role];
+  const title = {
+    student: t("This page is for students"),
+    landlord: t("This page is for landlords"),
+    buddy: t("This page is for buddies"),
+    admin: t("This page is for the MoveIn team"),
+  }[role];
   return (
     <div className="mx-auto mt-16 max-w-md text-center">
-      <h1 className="text-2xl font-bold">This page is for {who}</h1>
-      <p className="mt-2 text-sm text-muted">{me ? `You're signed in as ${fullName(me)} (${me.role}).` : "Please sign in to continue."}</p>
+      <h1 className="text-2xl font-bold">{title}</h1>
+      <p className="mt-2 text-sm text-muted">{me ? t("You're signed in as {name} ({role}).", { name: fullName(me), role: t(ROLE_LABEL[me.role]) }) : t("Please sign in to continue.")}</p>
       <ButtonLink href={`/signin?next=${encodeURIComponent(pathname)}`} className="mt-6">
-        {me ? "Switch account" : "Sign in"}
+        {me ? t("Switch account") : t("Sign in")}
       </ButtonLink>
     </div>
   );
 }
 
 function Notifications() {
+  const t = useT();
   const me = useMe();
   const all = useStore((s) => s.notifications);
   const markRead = useStore((s) => s.markNotificationsRead);
@@ -143,7 +162,7 @@ function Notifications() {
   return (
     <div className="relative" ref={ref}>
       <button
-        aria-label={`Notifications${unread ? `, ${unread} unread` : ""}`}
+        aria-label={unread ? t("Notifications, {count} unread", { count: unread }) : t("Notifications")}
         onClick={() => {
           setOpen((o) => !o);
           if (!open && unread) setTimeout(markRead, 1500);
@@ -155,21 +174,21 @@ function Notifications() {
       </button>
       {open && (
         <div className="absolute right-0 top-12 w-80 overflow-hidden rounded-2xl border border-line bg-white shadow-xl">
-          <p className="border-b border-line px-4 py-3 text-sm font-semibold">Notifications</p>
+          <p className="border-b border-line px-4 py-3 text-sm font-semibold">{t("Notifications")}</p>
           {mine.length === 0 ? (
-            <p className="px-4 py-6 text-center text-sm text-muted">You&apos;re all caught up.</p>
+            <p className="px-4 py-6 text-center text-sm text-muted">{t("You're all caught up.")}</p>
           ) : (
             <ul className="max-h-96 overflow-auto">
               {mine.map((n) => (
                 <li key={n.id}>
                   <Link href={n.href} onClick={() => setOpen(false)} className={cn("block px-4 py-3 text-sm hover:bg-brand-50", !n.read && "bg-brand-50/60 font-medium")}>
-                    {n.text}
+                    {t(n.text, n.vars)}
                   </Link>
                 </li>
               ))}
             </ul>
           )}
-          <p className="border-t border-line bg-slate-50 px-4 py-2 text-[11px] text-muted">In production these also go out by email and WhatsApp.</p>
+          <p className="border-t border-line bg-slate-50 px-4 py-2 text-[11px] text-muted">{t("In production these also go out by email and WhatsApp.")}</p>
         </div>
       )}
     </div>
@@ -177,6 +196,7 @@ function Notifications() {
 }
 
 function ProfileMenu() {
+  const t = useT();
   const me = useMe();
   const signOut = useStore((s) => s.signOut);
   const router = useRouter();
@@ -185,12 +205,12 @@ function ProfileMenu() {
   if (!me)
     return (
       <ButtonLink href="/signin" size="sm" className="h-10">
-        <UserRound className="size-4" /> Sign in
+        <UserRound className="size-4" /> {t("Sign in")}
       </ButtonLink>
     );
   return (
     <div className="relative" ref={ref}>
-      <button aria-label="Account menu" onClick={() => setOpen((o) => !o)} className="flex items-center gap-2 rounded-full bg-white p-0.5 pr-3 ring-1 ring-line hover:ring-brand-300">
+      <button aria-label={t("Account menu")} onClick={() => setOpen((o) => !o)} className="flex items-center gap-2 rounded-full bg-white p-0.5 pr-3 ring-1 ring-line hover:ring-brand-300">
         <Avatar name={fullName(me)} />
         <span className="hidden text-sm font-semibold sm:block">{me.firstName}</span>
       </button>
@@ -198,13 +218,13 @@ function ProfileMenu() {
         <div className="absolute right-0 top-12 w-60 overflow-hidden rounded-2xl border border-line bg-white py-2 shadow-xl">
           <div className="px-4 pb-2">
             <p className="text-sm font-semibold">{fullName(me)}</p>
-            <p className="text-xs capitalize text-muted">{me.role === "landlord" ? "Landlord / host" : me.role}</p>
+            <p className="text-xs text-muted">{t(ROLE_LABEL[me.role])}</p>
           </div>
           <Link href={homeFor(me.role)} className="block px-4 py-2 text-sm hover:bg-brand-50" onClick={() => setOpen(false)}>
-            My home
+            {t("My home")}
           </Link>
           <Link href="/signin" className="block px-4 py-2 text-sm hover:bg-brand-50" onClick={() => setOpen(false)}>
-            Switch account
+            {t("Switch account")}
           </Link>
           <button
             onClick={() => {
@@ -213,7 +233,7 @@ function ProfileMenu() {
             }}
             className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
           >
-            <LogOut className="size-4" /> Sign out
+            <LogOut className="size-4" /> {t("Sign out")}
           </button>
         </div>
       )}
@@ -222,25 +242,26 @@ function ProfileMenu() {
 }
 
 export function DemoBanner() {
+  const t = useT();
   const reset = useStore((s) => s.resetDemo);
   return (
     <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 bg-ink px-4 py-1.5 text-center text-xs text-white/85">
       <span>
-        <strong className="text-white">Demo mode</strong> · dummy data saved in this browser only
+        <strong className="text-white">{t("Demo mode")}</strong> · {t("dummy data saved in this browser only")}
       </span>
       <Link href="/signin" className="font-semibold text-brand-200 underline-offset-2 hover:underline">
-        Switch role
+        {t("Switch role")}
       </Link>
       <button
         onClick={() => {
-          if (confirm("Reset all demo data to the starting state?")) {
+          if (confirm(t("Reset all demo data to the starting state?"))) {
             reset();
             location.assign("/");
           }
         }}
         className="inline-flex items-center gap-1 font-semibold text-brand-200 hover:underline"
       >
-        <RotateCcw className="size-3" /> Reset demo
+        <RotateCcw className="size-3" /> {t("Reset demo")}
       </button>
     </div>
   );

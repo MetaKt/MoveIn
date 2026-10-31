@@ -1,3 +1,4 @@
+import { msg } from "./i18n";
 import type { Area, PlaceKind, PlaceType, RoomType, Station } from "./types";
 
 export const CHULA = { lat: 13.7384, lng: 100.5321, name: "Chulalongkorn University" };
@@ -5,11 +6,11 @@ export const CHULA = { lat: 13.7384, lng: 100.5321, name: "Chulalongkorn Univers
 export const AREAS: Area[] = [
   {
     id: "banthat-thong",
-    name: "Banthat Thong",
-    tagline: "Near restaurants · cafés · parks",
+    name: msg("Banthat Thong"),
+    tagline: msg("Near restaurants · cafés · parks"),
     priceFrom: 20000,
     description:
-      "Bangkok's favourite street-food strip runs right along the west side of campus. You can walk to class, and Chula Centenary Park is around the corner.",
+      msg("Bangkok's favourite street-food strip runs right along the west side of campus. You can walk to class, and Chula Centenary Park is around the corner."),
     lat: 13.7428,
     lng: 100.5236,
     nearby: {
@@ -20,11 +21,11 @@ export const AREAS: Area[] = [
   },
   {
     id: "samyan-silom",
-    name: "Samyan / Silom",
-    tagline: "Most popular · modern high-rises",
+    name: msg("Samyan / Silom"),
+    tagline: msg("Most popular · modern high-rises"),
     priceFrom: 18000,
     description:
-      "Samyan and Silom are among the most popular areas for Chula students, with modern high-rise condos, great facilities and the MRT on your doorstep.",
+      msg("Samyan and Silom are among the most popular areas for Chula students, with modern high-rise condos, great facilities and the MRT on your doorstep."),
     lat: 13.7322,
     lng: 100.5302,
     nearby: {
@@ -35,11 +36,11 @@ export const AREAS: Area[] = [
   },
   {
     id: "national-stadium",
-    name: "National Stadium",
-    tagline: "Central · newer condos",
+    name: msg("National Stadium"),
+    tagline: msg("Central · newer condos"),
     priceFrom: 20000,
     description:
-      "Right next to Siam's malls and the BTS, with a short ride or walk to the north side of campus. Great if you want city life on your doorstep.",
+      msg("Right next to Siam's malls and the BTS, with a short ride or walk to the north side of campus. Great if you want city life on your doorstep."),
     lat: 13.7466,
     lng: 100.5292,
     nearby: {
@@ -50,11 +51,11 @@ export const AREAS: Area[] = [
   },
   {
     id: "phaya-thai",
-    name: "Phaya Thai",
-    tagline: "Airport link · city access",
+    name: msg("Phaya Thai"),
+    tagline: msg("Airport link · city access"),
     priceFrom: 15000,
     description:
-      "Cheaper rents and a direct Airport Rail Link to Suvarnabhumi. Two BTS stops or a short bus ride to campus.",
+      msg("Cheaper rents and a direct Airport Rail Link to Suvarnabhumi. Two BTS stops or a short bus ride to campus."),
     lat: 13.7568,
     lng: 100.5338,
     nearby: {
@@ -88,78 +89,78 @@ export const LINE_COLORS: Record<Station["line"], string> = {
 
 /** Dummy faculty → area recommendations. MoveIn's team should confirm these. */
 export const FACULTIES: { id: string; name: string; areaIds: string[] }[] = [
-  { id: "ise", name: "International School of Engineering (ISE)", areaIds: ["banthat-thong", "samyan-silom", "national-stadium"] },
-  { id: "bba", name: "Commerce & Accountancy (BBA)", areaIds: ["samyan-silom", "banthat-thong", "phaya-thai"] },
-  { id: "bascii", name: "School of Integrated Innovation (BAScii)", areaIds: ["samyan-silom", "national-stadium", "phaya-thai"] },
-  { id: "arts", name: "Arts", areaIds: ["national-stadium", "banthat-thong", "phaya-thai"] },
-  { id: "polsci", name: "Political Science", areaIds: ["national-stadium", "samyan-silom", "phaya-thai"] },
-  { id: "commarts", name: "Communication Arts", areaIds: ["national-stadium", "samyan-silom", "phaya-thai"] },
-  { id: "economics", name: "Economics", areaIds: ["samyan-silom", "national-stadium", "phaya-thai"] },
-  { id: "science", name: "Science", areaIds: ["banthat-thong", "national-stadium", "samyan-silom"] },
-  { id: "medicine", name: "Medicine", areaIds: ["samyan-silom", "banthat-thong", "phaya-thai"] },
-  { id: "architecture", name: "Architecture", areaIds: ["banthat-thong", "national-stadium", "samyan-silom"] },
-  { id: "other", name: "Other", areaIds: ["samyan-silom", "national-stadium", "phaya-thai"] },
+  { id: "ise", name: msg("International School of Engineering (ISE)"), areaIds: ["banthat-thong", "samyan-silom", "national-stadium"] },
+  { id: "bba", name: msg("Commerce & Accountancy (BBA)"), areaIds: ["samyan-silom", "banthat-thong", "phaya-thai"] },
+  { id: "bascii", name: msg("School of Integrated Innovation (BAScii)"), areaIds: ["samyan-silom", "national-stadium", "phaya-thai"] },
+  { id: "arts", name: msg("Arts"), areaIds: ["national-stadium", "banthat-thong", "phaya-thai"] },
+  { id: "polsci", name: msg("Political Science"), areaIds: ["national-stadium", "samyan-silom", "phaya-thai"] },
+  { id: "commarts", name: msg("Communication Arts"), areaIds: ["national-stadium", "samyan-silom", "phaya-thai"] },
+  { id: "economics", name: msg("Economics"), areaIds: ["samyan-silom", "national-stadium", "phaya-thai"] },
+  { id: "science", name: msg("Science"), areaIds: ["banthat-thong", "national-stadium", "samyan-silom"] },
+  { id: "medicine", name: msg("Medicine"), areaIds: ["samyan-silom", "banthat-thong", "phaya-thai"] },
+  { id: "architecture", name: msg("Architecture"), areaIds: ["banthat-thong", "national-stadium", "samyan-silom"] },
+  { id: "other", name: msg("Other"), areaIds: ["samyan-silom", "national-stadium", "phaya-thai"] },
 ];
 
 export const ROOM_TYPE_LABEL: Record<RoomType, string> = {
-  studio: "Studio",
-  "1br": "1 Bedroom",
-  "2br": "2 Bedroom",
-  "3br": "3 Bedroom",
-  shared2: "Shared unit (2 people)",
-  shared34: "Shared unit (3–4 people)",
+  studio: msg("Studio"),
+  "1br": msg("1 Bedroom"),
+  "2br": msg("2 Bedroom"),
+  "3br": msg("3 Bedroom"),
+  shared2: msg("Shared unit (2 people)"),
+  shared34: msg("Shared unit (3–4 people)"),
 };
 
 export const PLACE_KIND_LABEL: Record<PlaceKind, string> = {
-  house: "House",
-  apartment: "Apartment",
-  condo: "Condo",
-  studio: "Studio",
-  dormitory: "Dormitory",
-  serviced: "Serviced residence",
+  house: msg("House"),
+  apartment: msg("Apartment"),
+  condo: msg("Condo"),
+  studio: msg("Studio"),
+  dormitory: msg("Dormitory"),
+  serviced: msg("Serviced residence"),
 };
 
 export const PLACE_TYPE_INFO: Record<PlaceType, { label: string; hint: string }> = {
-  entire: { label: "An entire place", hint: "Students have the whole place to themselves." },
-  room: { label: "A room", hint: "Students get their own room in a home, plus shared spaces." },
-  shared: { label: "A shared room", hint: "Students sleep in a shared room with other people." },
+  entire: { label: msg("An entire place"), hint: msg("Students have the whole place to themselves.") },
+  room: { label: msg("A room"), hint: msg("Students get their own room in a home, plus shared spaces.") },
+  shared: { label: msg("A shared room"), hint: msg("Students sleep in a shared room with other people.") },
 };
 
-export const AMENITIES = ["Wi-Fi", "Essentials", "Fridge", "TV", "Hot water", "Washing machine", "Air conditioning", "Kitchen", "Desk"];
-export const FACILITIES = ["Swimming pool", "Gym", "Co-working space", "Laundry", "24h security", "Parking", "Rooftop garden", "Shuttle to Chula"];
-export const NEARBY = ["7-11", "MRT", "BTS", "Gym", "Central", "Restaurants", "Campus", "Hospital", "Big C"];
+export const AMENITIES = [msg("Wi-Fi"), msg("Essentials"), msg("Fridge"), msg("TV"), msg("Hot water"), msg("Washing machine"), msg("Air conditioning"), msg("Kitchen"), msg("Desk")];
+export const FACILITIES = [msg("Swimming pool"), msg("Gym"), msg("Co-working space"), msg("Laundry"), msg("24h security"), msg("Parking"), msg("Rooftop garden"), msg("Shuttle to Chula")];
+export const NEARBY = [msg("7-11"), msg("MRT"), msg("BTS"), msg("Gym"), msg("Central"), msg("Restaurants"), msg("Campus"), msg("Hospital"), msg("Big C")];
 
 export const COUNTRIES: { name: string; code: string }[] = [
-  { name: "Australia", code: "AU" },
-  { name: "Austria", code: "AT" },
-  { name: "Belgium", code: "BE" },
-  { name: "Canada", code: "CA" },
-  { name: "China", code: "CN" },
-  { name: "Denmark", code: "DK" },
-  { name: "Finland", code: "FI" },
-  { name: "France", code: "FR" },
-  { name: "Germany", code: "DE" },
-  { name: "Hong Kong", code: "HK" },
-  { name: "India", code: "IN" },
-  { name: "Indonesia", code: "ID" },
-  { name: "Italy", code: "IT" },
-  { name: "Japan", code: "JP" },
-  { name: "Korea", code: "KR" },
-  { name: "Netherlands", code: "NL" },
-  { name: "Norway", code: "NO" },
-  { name: "Singapore", code: "SG" },
-  { name: "Spain", code: "ES" },
-  { name: "Sweden", code: "SE" },
-  { name: "Switzerland", code: "CH" },
-  { name: "Taiwan", code: "TW" },
-  { name: "United Kingdom", code: "GB" },
-  { name: "United States", code: "US" },
-  { name: "Other", code: "UN" },
+  { name: msg("Australia"), code: "AU" },
+  { name: msg("Austria"), code: "AT" },
+  { name: msg("Belgium"), code: "BE" },
+  { name: msg("Canada"), code: "CA" },
+  { name: msg("China"), code: "CN" },
+  { name: msg("Denmark"), code: "DK" },
+  { name: msg("Finland"), code: "FI" },
+  { name: msg("France"), code: "FR" },
+  { name: msg("Germany"), code: "DE" },
+  { name: msg("Hong Kong"), code: "HK" },
+  { name: msg("India"), code: "IN" },
+  { name: msg("Indonesia"), code: "ID" },
+  { name: msg("Italy"), code: "IT" },
+  { name: msg("Japan"), code: "JP" },
+  { name: msg("Korea"), code: "KR" },
+  { name: msg("Netherlands"), code: "NL" },
+  { name: msg("Norway"), code: "NO" },
+  { name: msg("Singapore"), code: "SG" },
+  { name: msg("Spain"), code: "ES" },
+  { name: msg("Sweden"), code: "SE" },
+  { name: msg("Switzerland"), code: "CH" },
+  { name: msg("Taiwan"), code: "TW" },
+  { name: msg("United Kingdom"), code: "GB" },
+  { name: msg("United States"), code: "US" },
+  { name: msg("Other"), code: "UN" },
 ];
 
-export const FOUND_VIA = ["Instagram", "Facebook", "TikTok", "From a friend", "Fastwork", "Other"];
+export const FOUND_VIA = [msg("Instagram"), msg("Facebook"), msg("TikTok"), msg("From a friend"), msg("Fastwork"), msg("Other")];
 
 export const SEMESTERS = [
-  { label: "Semester 1 (Aug–Dec)", lookFor: "April – August" },
-  { label: "Semester 2 (Jan–May)", lookFor: "October – December" },
+  { label: msg("Semester 1 (Aug–Dec)"), lookFor: msg("April – August") },
+  { label: msg("Semester 2 (Jan–May)"), lookFor: msg("October – December") },
 ];
